@@ -1,0 +1,343 @@
+
+
+##################################################
+# Pandas Alıştırmalar
+# Pandas Exercises
+##################################################
+
+import numpy as np
+import seaborn as sns
+import pandas as pd
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', 1000)
+
+import pandas as pd
+
+#########################################
+# Görev 1: Seaborn kütüphanesi içerisinden Titanic veri setini tanımlayınız.
+# Task 1:  Identify the Titanic dataset from the Seaborn library.
+#########################################
+
+import seaborn as sns
+df=sns.load_dataset("titanic")
+df.head()
+df.shape
+df.columns
+#   survived  pclass     sex   age  sibsp  parch     fare embarked  class    who  adult_male deck  embark_town alive  alone
+#0         0       3    male  22.0      1      0   7.2500        S  Third    man        True  NaN  Southampton    no  False
+#1         1       1  female  38.0      1      0  71.2833        C  First  woman       False    C    Cherbourg   yes  False
+#2         1       3  female  26.0      0      0   7.9250        S  Third  woman       False  NaN  Southampton   yes   True
+#3         1       1  female  35.0      1      0  53.1000        S  First  woman       False    C  Southampton   yes  False
+#4         0       3    male  35.0      0      0   8.0500        S  Third    man        True  NaN  Southampton    no   True
+
+
+df.index
+
+
+#########################################
+# Görev 2: Yukarıda tanımlanan Titanic veri setindeki kadın ve erkek yolcuların sayısını bulunuz.
+# Task 2:  Find the number of male and female passengers in the Titanic dataset described above.
+#########################################
+
+df.pivot_table("survived", "sex", aggfunc="count")
+
+df["sex"].value_counts()
+
+##Out:
+#        survived
+# sex
+# female       314
+# male         577
+
+#########################################
+# Görev 3: Her bir sutuna ait unique değerlerin sayısını bulunuz.
+# Task 3:  Find the number of unique values for each column.
+#########################################
+
+
+df.nunique()
+
+#Out:
+#survived         2
+#pclass           3
+#sex              2
+#age             88
+#sibsp            7
+#parch            7
+#fare           248
+#embarked         3
+
+#########################################
+# Görev 4: pclass değişkeninin unique değerleri bulunuz.
+# Task 4:  Find the unique values of the variable pclass.
+#########################################
+
+df.loc[:,"pclass"].unique()
+
+df["pclass"].unique()
+
+
+#########################################
+# Görev 5:  pclass ve parch değişkenlerinin unique değerlerinin sayısını bulunuz.
+# Task 5:  Find the number of unique values of pclass and parch variables.
+#########################################
+
+df[["pclass", "parch"]].nunique()
+#Out:
+#pclass    3
+#parch     7
+#dtype: int64
+
+#########################################
+# Görev 6: embarked değişkeninin tipini kontrol ediniz. Tipini category olarak değiştiriniz. Tekrar tipini kontrol ediniz.
+# Task 6:  Check the type of the embarked variable. Change its type to category. Check the repetition type.
+#########################################
+
+df.dtypes["embarked"]     # Out: dtype('O')
+
+df["embarked"] = df["embarked"].astype("category")
+
+df.dtypes["embarked"]  # Out: CategoricalDtype(categories=['C', 'Q', 'S'], ordered=False)
+str(df.dtypes["embarked"])
+
+#########################################
+# Görev 7: embarked değeri C olanların tüm bilgelerini gösteriniz.
+# Task 7:  Show all the sages of those with embarked value C.
+#########################################
+
+df.info()
+df.dtypes["embarked"]
+
+df.loc[df["embarked"] == "C", :].info
+df.loc[df["embarked"] == "C", :].head()
+df.[df["embarked"] == "C", :].head()
+
+#   survived  pclass     sex   age  sibsp  parch     fare embarked   class    who  adult_male deck embark_town alive  alone
+# 1          1       1  female  38.0      1      0  71.2833        C   First  woman       False    C   Cherbourg   yes  False
+# 9          1       2  female  14.0      1      0  30.0708        C  Second  child       False  NaN   Cherbourg   yes  False
+# 19         1       3  female   NaN      0      0   7.2250        C   Third  woman       False  NaN   Cherbourg   yes   True
+# 26         0       3    male   NaN      0      0   7.2250        C   Third    man        True  NaN   Cherbourg    no   True
+# 30         0       1    male  40.0      0      0  27.7208        C   First    man        True  NaN   Cherbourg    no   True
+
+#########################################
+# Görev 8: embarked değeri S olmayanların tüm bilgelerini gösteriniz.
+# Task 8:  Show all the sages of those whose embarked value is not S.
+#########################################
+
+df.loc[df["embarked"] != "S", :].info
+df.loc[df["embarked"] != "S", :].head()
+
+#########################################
+# Görev 9: Yaşı 30 dan küçük ve kadın olan yolcuların tüm bilgilerini gösteriniz.
+# Task 9:  Show all the information for female passengers younger than 30 years old.
+#########################################
+
+df.loc[(df["age"] < 30) & (df["sex"] == "female"), :].head()
+df.loc[(df["age"] < 30) & (df["sex"] == "female"), :].info
+
+#   survived  pclass     sex   age  sibsp  parch     fare embarked   class    who  adult_male deck embark_town alive  alone
+#1          1       1  female  38.0      1      0  71.2833        C   First  woman       False    C   Cherbourg   yes  False
+#5          0       3    male   NaN      0      0   8.4583        Q   Third    man        True  NaN  Queenstown    no   True
+#9          1       2  female  14.0      1      0  30.0708        C  Second  child       False  NaN   Cherbourg   yes  False
+#16         0       3    male   2.0      4      1  29.1250        Q   Third  child       False  NaN  Queenstown    no  False
+#19         1       3  female   NaN      0      0   7.2250        C   Third  woman       False  NaN   Cherbourg   yes   True
+
+
+#########################################
+# Görev 10: Fare'i 500'den büyük veya yaşı 70 den büyük yolcuların bilgilerini gösteriniz.
+# Task 10:  Show the information of passengers whose Fare is over 500 or 70 years old.
+#########################################
+
+
+df.loc[(df["fare"] > 500) | (df["age"] > 70), :].info()
+df.loc[(df["fare"] > 500) | (df["age"] > 70), :].head()
+
+##<bound method DataFrame.info of      survived  pclass     sex   age  sibsp  parch      fare embarked  class    who  adult_male deck  embark_town alive  alone
+##96          0       1    male  71.0      0      0   34.6542        C  First    man        True    A    Cherbourg    no   True
+##116         0       3    male  70.5      0      0    7.7500        Q  Third    man        True  NaN   Queenstown    no   True
+##258         1       1  female  35.0      0      0  512.3292        C  First  woman       False  NaN    Cherbourg   yes   True
+##493         0       1    male  71.0      0      0   49.5042        C  First    man        True  NaN    Cherbourg    no   True
+##630         1       1    male  80.0      0      0   30.0000        S  First    man        True    A  Southampton   yes   True
+##679         1       1    male  36.0      0      1  512.3292        C  First    man        True    B    Cherbourg   yes  False
+##737         1       1    male  35.0      0      0  512.3292        C  First    man        True    B    Cherbourg   yes   True
+##851         0       3    male  74.0      0      0    7.7750        S  Third    man        True  NaN  Southampton    no   True>
+
+#########################################
+# Görev 11: Her bir değişkendeki boş değerlerin toplamını bulunuz.
+# Task 11:  Find the sum of the null values in each variable.
+#########################################
+
+df.isnull().sum()
+
+#Out:
+#survived         0
+#pclass           0
+#sex              0
+#age            177
+#sibsp            0
+#parch            0
+#fare             0
+#embarked         2
+#class            0
+#who              0
+#adult_male       0
+#deck           688
+#embark_town      2
+#alive            0
+#alone            0
+#dtype: int64
+
+#########################################
+# Görev 12: who değişkenini dataframe'den düşürün.
+# Task 12:  drop the who variable from the dataframe.
+#########################################
+
+df.drop("who", axis=1).head()
+
+#########################################
+# Görev 13: deck değikenindeki boş değerleri deck değişkenin en çok tekrar eden değeri (mode) ile doldurunuz.
+# Task 13:  Fill the empty values in the deck variable with the most repeated value (mode) of the deck variable.
+#########################################
+df.tail()
+df.mode()
+df["deck"].mode() # deck'de en çok tekrar eden değer  Out : 0  C // Mode values of deck : C
+df["deck"].isnull() #boş değerler var ise True olarak getirir  // If any N/A values , return True
+
+df["deck"] = df["deck"].fillna((df["deck"].mode().iloc[0]))
+
+
+#########################################
+# Görev 14: age değikenindeki boş değerleri age değişkenin medyanı ile doldurun.
+# Task 14:  Fill the empty values in the age variable with the median of the age variable.
+#########################################
+
+df["age"].median()  # Median Values of age : 28
+
+df["age"] = df["age"].fillna(df["age"].median()) #Filled N/A values with 28
+
+#########################################
+# Görev 15: survived değişkeninin Pclass ve Cinsiyet değişkenleri kırılımınında sum, count, mean değerlerini bulunuz.
+# Task 15:  Find the sum, count, mean values of the Pclass and Gender variables of the survived variable.
+#########################################
+df.head()
+
+
+df.groupby(["pclass","sex"]).agg({"survived" : ["sum","count","mean"]})
+#                   sum count      mean
+#pclass sex
+#1      female       91    94  0.968085
+#       male         45   122  0.368852
+#2      female       70    76  0.921053
+#       male         17   108  0.157407
+#3      female       72   144  0.500000
+#       male         47   347  0.135447
+
+#########################################
+# Görev 16:  30 yaşın altında olanlar 1, 30'a eşit ve üstünde olanlara 0 vericek bir fonksiyon yazınız.
+# Yazdığınız fonksiyonu kullanarak titanik veri setinde age_flag adında bir değişken oluşturunuz oluşturunuz. (apply ve lambda yapılarını kullanınız)
+# ------------------------------------------------------------------------------------------------------------------------------------------------------
+# Task 16:  Write a function that returns 1 for those under 30, 0 for those above or equal to 30.
+# Create a variable named age_flag in the titanic data set using the function you wrote. (use apply and lambda constructs)
+#########################################
+age_control=df["age"].apply(lambda age : 1 if age < 30 else 0)
+df["age_flag"]=age_control
+
+df[["age","age_flag"]].head()
+
+#Out[40]:
+#    age  age_flag
+#0  22.0         1
+#1  38.0         0
+#2  26.0         1
+#3  35.0         0
+#4  35.0         0
+
+
+
+#########################################
+# Görev 17: Seaborn kütüphanesi içerisinden Tips veri setini tanımlayınız.
+# Task 17:  Define the Tips dataset from the Seaborn library.
+#########################################
+
+df_t = sns.load_dataset("tips")
+df_t.head()
+
+#########################################
+# Görev 18: Time değişkeninin kategorilerine (Dinner, Lunch) göre total_bill  değerlerinin toplamını, min, max ve ortalamasını bulunuz.
+# Task 18:  Find the sum, min, max and average of the total_bill values according to the categories (Dinner, Lunch) of the Time variable.
+#########################################
+
+df_t.groupby("time").agg({"total_bill" : ["min","max","mean"]})
+
+Out[46]:
+##       total_bill
+##             min    max       mean
+##time
+##Lunch        7.51  43.11  17.168676
+##Dinner       3.07  50.81  20.797159
+
+#########################################
+# Görev 19: Günlere ve time göre total_bill değerlerinin toplamını, min, max ve ortalamasını bulunuz.
+#########################################
+
+df_t.groupby("day").agg({"total_bill" : ["sum","min","max","mean"]})
+
+##    total_bill
+##            sum   min    max       mean
+##day
+##Thur    1096.33  7.51  43.11  17.682742
+##Fri      325.88  5.75  40.17  17.151579
+##Sat     1778.40  3.07  50.81  20.441379
+##Sun     1627.16  7.25  48.17  21.410000
+
+#########################################
+# Görev 20:Lunch zamanına ve kadın müşterilere ait total_bill ve tip  değerlerinin day'e göre toplamını, min, max ve ortalamasını bulunuz.
+# Task 20:  Find the sum, min, max and average of the total_bill and type values of the female customers, according to the day, for the lunch time.
+#########################################
+
+df_t.query("sex=='Female' & time=='Lunch'").groupby("day").agg({"total_bill":["sum","min","max","mean"],
+    "tip":["sum","min","max","mean"]})
+
+df_t.loc[(df_t["sex"]=="Female") &
+         (df_t["time"]=="Lunch")].groupby("day").agg(
+    {"total_bill":["sum","min","max","mean"],
+    "tip":["sum","min","max","mean"]})
+
+#     total_bill                            tip
+#            sum    min    max      mean    sum   min   max      mean
+#day
+#Thur     516.11   8.35  43.11  16.64871  79.42  1.25  5.17  2.561935
+#Fri       55.76  10.09  16.27  13.94000  10.98  2.00  3.48  2.745000
+#Sat        0.00    NaN    NaN       NaN   0.00   NaN   NaN       NaN
+#Sun        0.00    NaN    NaN       NaN   0.00   NaN   NaN       NaN
+
+#########################################
+# Görev 21: size'i 3'ten küçük, total_bill'i 10'dan büyük olan siparişlerin ortalaması nedir?
+# Task 21:  What is the average of orders with size less than 3 and total_bill greater than 10?
+#########################################
+
+df_t.head()
+df_t.loc[(df_t["size"] < 3 ) & (df_t["total_bill"] > 10)].agg({"total_bill" :"mean"})
+#Out[67]:
+#total_bill    17.184965
+#dtype: float64
+
+#########################################
+# Görev 22: total_bill_tip_sum adında yeni bir değişken oluşturun. Her bir müşterinin ödediği totalbill ve tip in toplamını versin.
+# Task 22:  Create a new variable called total_bill_tip_sum. Let him give the sum of the total bill and tip paid by each customer.
+#########################################
+
+
+df_t["total_bill_tip_sum"]=df_t["total_bill"] + df_t["tip"]
+df_t.head()
+#########################################
+# Görev 23: total_bill_tip_sum değişkenine göre büyükten küçüğe sıralayınız ve ilk 30 kişiyi yeni bir dataframe'e atayınız.
+# Task 23:  Sort the total_bill_tip_sum variable from largest to smallest and assign the first 30 people to a new dataframe.
+#########################################
+
+df_t.sort_values(by=["total_bill_tip_sum"], ascending=False).head(30)  # Top 30 customer equal to total bill
+
+
+df_t_top_30_customers = df_t.sort_values(by=["total_bill_tip_sum"], ascending=False).head(30)
+df_t_top_30_customers
